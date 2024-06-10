@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> SalesHistory Insertion</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <style>
+          body {
+            border: 2px solid blue;
+            padding: 0 px; /* Optional: adds space between the border and the content */
+        }
+        .upload-container {
+            display: flex;
+            align-items: center;
+        }
+        #selected-message {
+            margin-top: 5px;
+            font-weight: normal;
+            color: greenyellow;
+        }
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        .container {
+            flex: 1;
+        }
+        footer {
+            background-color: blue;
+            padding: 20px;
+            margin-top: 20px;
+            bottom: 0;
+            width: 100%;
+        }
+        footer p {
+            margin: 0;
+            text-align: center;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row mb-3">
+            <div class="col-4">
+                <img src="{% static 'images/RFPL_logo.jpg' %}" alt="RFPL Logo" class="img-fluid2" style="max-height: 150px;">
+            </div>
+        </div>
+        <h4>File Upload</h4>
+        <br>
+        <h6>Upload File With Data For Sales History, Items, Order To Receive And Batch Expirations.</h6>
+        <br><br>
+        <h6> Select a file</h6>
+        <div class="row upload-container">
+            <div class="col-auto">
+                <div class="dropdown">
+                    <button class="dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Sales_History_Table
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <a class="dropdown-item" href="http://127.0.0.1:8000/batchform/ba/" onclick="selectOption('Batch_Expiration')">Batch_Expiration</a>
+                        <a class="dropdown-item" href="http://127.0.0.1:8000/itemform/itm/" onclick="selectOption('Item')">Item</a>
+                        <a class="dropdown-item" href="http://127.0.0.1:8000/order/ord/" onclick="selectOption('Order_To_Receive')">Order_To_Receive</a>
+                        <a class="dropdown-item" href="http://127.0.0.1:8000/sales/sale" onclick="selectOption('Sales_History_Table')">Sales_History_Table</a>
+                    </div>
+                </div>
+                <div id="selected-message"></div>
+            </div>
+            <div class="col-auto">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="form-row align-items-center">
+                        <div class="col-auto">
+                            {{ form.file }}
+                        </div>
+                        <div class="col-auto">
+                            <button type="submit" class="btn btn-primary">Upload</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="container">
+            <div class="row">
+              {% if messages %}
+              <ul class="list-group mt-3">
+                  {% for message in messages %}
+                      <li class="list-group-item list-group-item-{{ message.tags }}">{{ message }}</li>
+                  {% endfor %}
+              </ul>
+              {% endif %}
+            </div>
+          </div>
+    </div>
+    <footer>
+        <div class="container">
+            <p>&copy; RF Foodland 2024, All rights reserved.</p>
+        </div>
+    </footer>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script>
+        function selectOption(option) {
+            document.getElementById('selected-messag').innerText = `You selected: ${option}`;
+        }
+    </script>
+</body>
+</html>
