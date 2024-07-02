@@ -118,6 +118,8 @@ DATABASES = {
         'OPTIONS': {
             'driver': 'ODBC Driver 17 for SQL Server',  # Make sure the driver is installed
             'extra_params': 'TrustServerCertificate=yes;',  # Optional: other ODBC connection options
+            'conn_max_age': 600,  # Maximum age of a connection in seconds (10 minutes)
+            'timeout': 20,  # Connection timeout in seconds
         },
     }
 }

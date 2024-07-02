@@ -61,7 +61,7 @@
                         <a class="dropdown-item" href="http://127.0.0.1:8000/batchform/ba/" onclick="selectOption('Batch_Expiration')">Batch_Expiration</a>
                         <a class="dropdown-item" href="http://127.0.0.1:8000/itemform/itm/" onclick="selectOption('Item')">Item</a>
                         <a class="dropdown-item" href="http://127.0.0.1:8000/order/ord/" onclick="selectOption('Order_To_Receive')">Order_To_Receive</a>
-                        <a class="dropdown-item" href="http://127.0.0.1:8000/sales/sale" onclick="selectOption('Sales_History_Table')">Sales_History_Table</a>
+                        <a class="dropdown-item" href="http://127.0.0.1:8000/sales/sale" onclick="selectOption('Sales_History')">Sales_History</a>
                     </div>
                 </div>
             </div>
@@ -77,6 +77,7 @@
                         </div>
                     </div>
                 </form>
+              
                
             </div>
         </div>
@@ -91,6 +92,8 @@
               {% endif %}
             </div>
           </div>
+          <br>
+          <a href="{% url 'download_batchEx_excel' %}">Download Batch Expirations</a>
     </div>
     <footer>
         <div class="container">

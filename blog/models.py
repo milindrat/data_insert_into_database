@@ -1,5 +1,6 @@
 from django.db import models
 from django.core.exceptions import ValidationError
+from django.utils import timezone
 
 # Create your models here.
 
@@ -71,22 +72,33 @@ class OrdersToReceive(models.Model):
 
 
 
+
 class SalesHistory(models.Model):
-    total = models.CharField(max_length=10, null=True, blank=True)
-    category = models.CharField(max_length=64, null=True, blank=True)
-    Class = models.CharField(max_length=64, null=True, blank=True)
-    variable_name = models.CharField(max_length=64, null=True, blank=True)
-    description = models.CharField(max_length=512, null=True, blank=True)
-    starting_year = models.IntegerField(null=True, blank=True)
-    starting_period = models.IntegerField(null=True, blank=True)
-    periods_per_year = models.IntegerField(null=True, blank=True)
-    periods_per_cycle = models.IntegerField(null=True, blank=True)
+    total = models.DecimalField(max_digits=10, decimal_places=2)
+    category = models.CharField(max_length=255)
+    Class = models.CharField(max_length=255)
+    variable_name = models.CharField(max_length=255)
+    description = models.TextField()
+    starting_year = models.IntegerField()
+    starting_period = models.IntegerField()
+    periods_per_year = models.IntegerField()
+    periods_per_cycle = models.IntegerField()
     attribute = models.DateTimeField(null=True, blank=True)
-    value = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    customer = models.CharField(max_length=64, null=True, blank=True)
-    dc_name = models.CharField(max_length=256, null=True, blank=True)
+    value = models.DecimalField(max_digits=10, decimal_places=2)
+    customer = models.CharField(max_length=255)
+    dc_name = models.CharField(max_length=255)
     updated_on = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         db_table = 'Sales_History_table'
 
+'''
+    def save(self, *args, **kwargs):
+        if self.attribute and timezone.is_naive(self.attribute):
+            self.attribute = timezone.make_aware(self.attribute, timezone.get_current_timezone())
+        if self.updated_on and timezone.is_naive(self.updated_on):
+            self.updated_on = timezone.make_aware(self.updated_on, timezone.get_current_timezone())
+        super(SalesHistory, self).save(*args, **kwargs)
+'''
+
+    

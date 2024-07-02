@@ -3,22 +3,26 @@ from django.contrib.auth import authenticate, login
 from django.contrib import messages
 
 from django.conf import settings
-from django.http import FileResponse,Http404
+from django.http import FileResponse,Http404,HttpResponse
 import os
 
 from .forms import *
 from .models import *
 import pandas as pd
+
 import logging
+from tempfile import NamedTemporaryFile
+from django.contrib.auth.decorators import login_required
 
 from django.db import IntegrityError
+from django.utils import timezone
 from django.contrib.auth.forms import AuthenticationForm
 
 
 
 
 # Create your views here.
-
+@login_required
 def Home_view(request):
     template_name = 'blog/base.html'
     form=BatchExpirationUploadFileForm()
@@ -42,7 +46,7 @@ def login_view(request):
     else:
         form = LoginForm()
     return render(request, 'blog/login.html', {'form': form})
-
+#@login_required
 def batchEx_handle_uploaded_file(f):
     try:
         df = pd.read_excel(f, engine='openpyxl')
@@ -81,8 +85,10 @@ def batchEx_upload_file(request):
         fm = BatchExpirationUploadFileForm()
     return render(request, 'blog/batch_form.html', {'form': fm})
 
-
-
+def download_batchEx_excel(request):
+    file_path = r'D:\OneDrive - Radhakrishna Foodland Pvt Ltd\Python_Project\File To Upload Tool\BatchExpiration.xlsx'
+    return serve_file(request, file_path, 'BatchExpiration.xlsx')
+    
 
 def add_item(row):
     try:
@@ -141,15 +147,18 @@ def item_upload_file(request):
         fm = ItemUploadFileForm()
     return render(request, 'blog/item_form.html', {'form': fm})
 
+def download_item_excel(request):
+    file_path = r'D:\OneDrive - Radhakrishna Foodland Pvt Ltd\Python_Project\File To Upload Tool\Item.xlsx'
+    return serve_file(request, file_path, 'Item.xlsx')
+    
+
 def ordertoreceive_handle_uploaded_file(f):
     try:
         df = pd.read_excel(f, engine='openpyxl')
     except FileNotFoundError:
         logging.error("File not found")
         raise
-    except ValueError as e:
-        logging.error(f"Value error: {e}")
-        raise
+   
 
     for index, row in df.iterrows():
         try:
@@ -184,14 +193,16 @@ def ordertoreceive_upload_file(request):
         fm = OrdersToReceiveUploadFileForm()
     return render(request, 'blog/orderstoreceive_form.html', {'form': fm})
 
+
+def download_orderstoreceive_excel(request):
+    file_path = r'D:\OneDrive - Radhakrishna Foodland Pvt Ltd\Python_Project\File To Upload Tool\OrderToReceive.xlsx'
+    return serve_file(request, file_path, 'OrderToReceive.xlsx')
+
 def saleshistory_handle_uploaded_file(f):
     try:
         df = pd.read_excel(f, engine='openpyxl')
     except FileNotFoundError:
         logging.error("File not found")
-        raise
-    except ValueError as e:
-        logging.error(f"Value error: {e}")
         raise
 
     for index, row in df.iterrows():
@@ -210,11 +221,12 @@ def saleshistory_handle_uploaded_file(f):
                 value=row['value'],
                 customer=row['customer'],
                 dc_name=row['dc_name'],
-                updated_on=row['updated_on']
+                updated_on=row['updated_on'],
             )
         except Exception as e:
             logging.error(f"Error inserting row {index}: {e}")
             raise
+
 
 def saleshistory_upload_file(request):
     if request.method == 'POST':
@@ -230,6 +242,23 @@ def saleshistory_upload_file(request):
     else:
         fm = SalesHistoryUploadFileForm()
     return render(request, 'blog/saleshistory_form.html', {'form': fm})
+
+
+def download_saleshistory_excel(request):
+    file_path = r'D:\OneDrive - Radhakrishna Foodland Pvt Ltd\Python_Project\File To Upload Tool\SalesHistory.xlsx'
+    return serve_file(request, file_path, 'SalesHistory.xlsx')
+    
+
+# Each download_file function will call serve_file with the appropriate file path and filename.
+def serve_file(request, file_path, filename):
+    if os.path.exists(file_path):
+        with open(file_path, 'rb') as file:
+            response = HttpResponse(file.read(), content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+            response['Content-Disposition'] = f'attachment; filename="{filename}"'
+            return response
+    else:
+        return HttpResponse(status=404)
+
 
 '''
 def downloads_page(request):
